@@ -2,9 +2,10 @@ import what3words
 import sys
 import json
 import cv2
+import pytesseract
 
 country = 'pl'
-API_KEY = '4MTIK6RG'
+API_KEY = '4MTIK6RG' #klucz API zrub se swoj!!
 
 def w3wReturnLngLat(w3wText):
     geocoder = what3words.Geocoder(API_KEY)
@@ -15,24 +16,19 @@ def w3wReturnLngLat(w3wText):
         if x['country'] == country:
             return x['geometry']['lng'],x['geometry']['lat']
 
+
 if len(sys.argv)>1:
     inputImage = cv2.imread(sys.argv[1])
 else:
-    inputImage = cv2.imread("address.png")
+    inputImage = cv2.imread("w3wText.png")
 
+config = ('-l eng --oem 1 --psm 3')
 
-qrDecoder = cv2.QRCodeDetector()
-data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)
+text = pytesseract.image_to_string(inputImage, config=config)
 
-if len(data) > 0:
-    print("on QR found text: " ,data)
-    data = data.split('///')[1]
+print('read from image = ',text)
 
-    lng,lat = w3wReturnLngLat(data)
+lng,lat=w3wReturnLngLat(text)
 
-    print("lng = ", lng)
-    print("lat = ", lat)
-
-else:
-    print("No QR code found")
- 
+print("lng = ", lng)
+print("lat = ", lat)
