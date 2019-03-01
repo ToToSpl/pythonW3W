@@ -26,7 +26,6 @@ data,bbox,rectifiedImage = qrDecoder.detectAndDecode(inputImage)
 
 if len(data) > 0:
     print("on QR found text: " ,data)
-    data = data.split('///')[1]
 
     lng,lat = w3wReturnLngLat(data)
 

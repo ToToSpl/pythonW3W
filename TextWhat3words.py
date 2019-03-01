@@ -8,13 +8,16 @@ country = 'pl'
 API_KEY = '4MTIK6RG' #klucz API zrub se swoj!!
 
 def w3wReturnLngLat(w3wText):
-    geocoder = what3words.Geocoder(API_KEY)
-    res = geocoder.autosuggest_ml(w3wText)
-    res = json.dumps(res)
-    loadedRes = json.loads(res)
-    for x in loadedRes['suggestions']:
-        if x['country'] == country:
-            return x['geometry']['lng'],x['geometry']['lat']
+    if w3wText.find('///') is not -1:
+        geocoder = what3words.Geocoder(API_KEY)
+        res = geocoder.autosuggest_ml(w3wText)
+        res = json.dumps(res)
+        loadedRes = json.loads(res)
+        for x in loadedRes['suggestions']:
+            if x['country'] == country:
+                return 1,x['geometry']['lng'],x['geometry']['lat']
+    else:
+        return 0,0,0
 
 
 if len(sys.argv)>1:
@@ -28,7 +31,9 @@ text = pytesseract.image_to_string(inputImage, config=config)
 
 print('read from image = ',text)
 
-lng,lat=w3wReturnLngLat(text)
-
-print("lng = ", lng)
-print("lat = ", lat)
+test,lng,lat = w3wReturnLngLat(text)
+if test:
+    print("lng = ", lng)
+    print("lat = ", lat)
+else:
+    print("wrong text found")
